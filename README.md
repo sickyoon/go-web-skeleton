@@ -1,2 +1,15 @@
 # go-web-skeleton
-Go web skeleton based on httprouter
+
+Lightweight Go Web Skeleton with focus on performance.
+Use this as a starting point for your new Go project!
+
+# Dependencies
+
+* julienschmidt/httprouter
+* golang/groupcache
+* gorilla/handlers
+
+# License
+
+MIT
+
