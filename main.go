@@ -7,7 +7,7 @@ import (
 	"github.com/sickyoon/go-web-skeleton/goapp"
 )
 
-var config = flag.String("config", "", "configuration file")
+var config = flag.String("config", "config.toml", "configuration file")
 
 func main() {
 	// parse cmd args

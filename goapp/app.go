@@ -1,6 +1,7 @@
 package goapp
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -28,13 +29,13 @@ func NewApp(configFile string) *App {
 
 	// load config file if exists
 	if configFile != "" {
-		if _, err := toml.DecodeFile(configFile, app.config); err != nil {
+		if _, err := toml.DecodeFile(configFile, &app.config); err != nil {
 			log.Panic(err)
 		}
 	}
 
 	// establish db connection
-	app.db = NewMongoClient("localhost", "goapp")
+	app.db = NewMongoClient(app.config.Database.URI, "goapp")
 
 	// add handlers
 	app.GET("/", app.index)
@@ -49,9 +50,19 @@ func NewApp(configFile string) *App {
 	return &app
 }
 
+// Handle handler errors
+func (a *App) handleError(w http.ResponseWriter, err error) {
+	http.Error(w, err.Error(), http.StatusInternalServerError)
+}
+
+// Handle bad request
+func (a *App) handleBadRequest(w http.ResponseWriter, msg string) {
+	http.Error(w, msg, http.StatusBadRequest)
+}
+
 // Run runs this web application
-// TODO: do escape analysis to see if pointer receiver makes sense
-//       value receiver saves memory in certain cases
-func (a App) Run() {
-	log.Fatal(http.ListenAndServe(":8000", a.handlers))
+func (a *App) Run() {
+	log.Fatal(
+		http.ListenAndServe(fmt.Sprintf(":%d", a.config.Server.Port), a.handlers),
+	)
 }
