@@ -15,6 +15,7 @@ type App struct {
 	*httprouter.Router              // httprouter
 	handlers           http.Handler // modified net/http handler (for middlewares)
 	config             Config       // configuration object
+	db                 *MongoClient // database client (pointer used to avoid session copy)
 }
 
 // NewApp creates new web application
@@ -31,6 +32,9 @@ func NewApp(configFile string) *App {
 			log.Panic(err)
 		}
 	}
+
+	// establish db connection
+	app.db = NewMongoClient("localhost", "goapp")
 
 	// add handlers
 	app.GET("/", app.index)
